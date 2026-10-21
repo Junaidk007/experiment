@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JUNAID.OS — Developer Command Center</title>
+<meta name="description" content="Gaming-inspired developer portfolio prototype for Junaid Khan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#241116; --shell:#32171D; --panel:#421E26; --elev:#54252E;
+  --accent:#B94C59; --pink:#E8A3A6; --text:#F7F1ED; --muted:#BDA9AB; --border:#67414A;
+  --radius:22px; --sb:228px;
+  --font-h:"Space Grotesk","Segoe UI",system-ui,sans-serif;
+  --font-b:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:15px;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(900px 600px at 15% 0%,rgba(185,76,89,.22),transparent 60%),radial-gradient(800px 600px at 100% 100%,rgba(232,163,166,.12),transparent 60%);
+  transition:opacity .4s}
+body.no-glow::before{opacity:0}
+body.no-glow .glow-on{box-shadow:none!important}
+h1,h2,h3,h4{font-family:var(--font-h);letter-spacing:.01em;line-height:1.15}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--pink);outline-offset:2px;border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* Shell */
+.app{position:relative;z-index:1;display:grid;grid-template-columns:var(--sb) minmax(0,1fr);gap:14px;min-height:100vh;padding:14px;max-width:1680px;margin:0 auto}
+body.compact{--sb:76px}
+.sidebar{position:sticky;top:14px;height:calc(100vh - 28px);background:var(--shell);border:1px solid var(--border);border-radius:28px;padding:18px 12px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.logo{display:flex;align-items:center;gap:10px;padding:4px 8px 14px;font-family:var(--font-h);font-weight:700;font-size:18px;letter-spacing:.06em;white-space:nowrap}
+.logo-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#7d2e3a);display:grid;place-items:center;font-size:17px;flex:none;box-shadow:0 6px 18px rgba(185,76,89,.45)}
+.logo b{color:var(--pink)}
+.nav{display:flex;flex-direction:column;gap:4px;position:relative;flex:1}
+.nav-ind{position:absolute;left:-12px;width:4px;height:28px;border-radius:0 4px 4px 0;background:var(--pink);top:0;transform:translateY(0);transition:transform .35s var(--ease),opacity .2s;opacity:0;box-shadow:0 0 12px var(--pink)}
+.nav a{position:relative;display:flex;align-items:center;gap:12px;height:46px;padding:0 14px;border-radius:14px;color:var(--muted);font-weight:500;white-space:nowrap;transition:background .2s,color .2s,transform .2s}
+.nav a:hover{background:rgba(185,76,89,.16);color:var(--text);transform:translateX(2px)}
+.nav a.active{background:linear-gradient(90deg,rgba(185,76,89,.55),rgba(185,76,89,.18));color:var(--text);box-shadow:0 0 22px rgba(185,76,89,.28),inset 0 0 0 1px rgba(232,163,166,.25)}
+.nav a::after{content:attr(data-tip);position:absolute;left:calc(100% + 14px);top:50%;transform:translate(-6px,-50%);background:var(--elev);border:1px solid var(--border);padding:5px 10px;border-radius:9px;font-size:12px;opacity:0;pointer-events:none;transition:.18s;z-index:30;display:none}
+body.compact .nav a{justify-content:center;padding:0}
+body.compact .nav a span.lbl,body.compact .logo span.lbl,body.compact .side-foot .lbl{display:none}
+body.compact .nav a::after{display:block}
+body.compact .nav a:hover::after,body.compact .nav a:focus-visible::after{opacity:1;transform:translate(0,-50%)}
+body.compact .logo{justify-content:center;padding:4px 0 14px}
+.side-foot{font-size:12px;color:var(--muted);padding:10px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--pink);box-shadow:0 0 10px var(--pink);flex:none}
+
+.stage{min-width:0;background:var(--shell);border:1px solid var(--border);border-radius:28px;padding:18px 22px 26px;box-shadow:0 20px 50px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:18px;min-height:calc(100vh - 28px)}
+.topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.crumb{min-width:0;flex:1 1 220px}
+.crumb small{display:block;color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.crumb small a:hover{color:var(--pink)}
+.crumb h2{font-size:24px}
+.search-btn{display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;min-width:230px;background:var(--bg);border:1px solid var(--border);border-radius:999px;color:var(--muted);transition:.2s}
+.search-btn:hover{border-color:var(--accent);color:var(--text)}
+.kbd{margin-left:auto;font-size:11px;border:1px solid var(--border);border-radius:6px;padding:1px 6px;color:var(--muted)}
+.status{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;background:rgba(185,76,89,.18);border:1px solid var(--accent);font-size:11px;font-weight:600;letter-spacing:.1em;max-width:100%}
+.status .dot{animation:pulse 2.4s infinite}
+.status [contenteditable]{outline:none;min-width:40px;white-space:nowrap;cursor:text}
+.status [contenteditable]:focus{border-bottom:1px dashed var(--pink)}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-h);font-weight:700;background:linear-gradient(135deg,var(--pink),var(--accent));color:#2a0f15;border:2px solid var(--border);cursor:pointer;transition:transform .2s}
+.avatar:hover{transform:scale(1.07)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* View + animation */
+#view{outline:none;min-width:0}
+.view-in{animation:viewIn .45s var(--ease)}
+@keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+[data-s]{animation:rise .55s var(--ease) both;animation-delay:calc(var(--i,0)*60ms)}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+body.reduce *,body.reduce *::before,body.reduce *::after{animation-duration:.001ms!important;animation-delay:0ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-delay:0ms!important;transition-duration:.001ms!important}}
+
+/* Generic */
+.grid{display:grid;gap:16px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;min-width:0}
+.panel h3{font-size:16px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.panel h3 small{font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.06em}
+.muted{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:999px;font-family:var(--font-h);font-weight:600;font-size:13px;letter-spacing:.08em;transition:transform .2s var(--ease),box-shadow .2s,background .2s;white-space:nowrap}
+.btn.pri{background:var(--text);color:#3a1219}
+.btn.pri:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.btn.sec{background:rgba(0,0,0,.28);border:1px solid rgba(247,241,237,.35)}
+.btn.sec:hover{background:rgba(0,0,0,.45);transform:translateY(-2px)}
+.btn.red{background:var(--accent);color:#fff;box-shadow:0 8px 22px rgba(185,76,89,.4)}
+.btn.red:hover{transform:translateY(-2px);background:#c95a67}
+.btn[disabled],.btn.off{opacity:.45;cursor:not-allowed;transform:none!important}
+.chip{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.06em;background:rgba(0,0,0,.3);border:1px solid var(--border);color:var(--pink);white-space:nowrap}
+.chip.live{background:rgba(232,163,166,.18);border-color:var(--pink)}
+.chip.warn{color:#ffd9a6;border-color:#a8774a}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;border-radius:30px;padding:36px;min-height:300px;background:linear-gradient(120deg,#c25361 0%,#8c3340 48%,#4a1f29 100%);display:flex;align-items:center;box-shadow:0 24px 60px rgba(0,0,0,.4),0 0 60px rgba(185,76,89,.18);isolation:isolate}
+.hero-copy{max-width:560px;position:relative;z-index:2}
+.eyebrow{font-family:var(--font-h);font-size:12px;letter-spacing:.2em;font-weight:600;color:#ffe3e1;margin-bottom:10px}
+.hero h1{font-size:clamp(30px,4.2vw,50px);margin-bottom:8px}
+.hero .role{font-family:var(--font-h);font-weight:500;color:#ffe3e1;margin-bottom:14px}
+.hero p{color:#f7dcd9;max-width:46ch;margin-bottom:22px}
+.hero-art{position:absolute;right:-30px;top:-20px;bottom:-20px;width:52%;z-index:1;opacity:.95;pointer-events:none}
+.hero-art svg{width:100%;height:100%}
+.spin{transform-origin:50% 50%;animation:spin 40s linear infinite}
+.float{animation:float 6s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{50%{transform:translateY(-10px)}}
+
+.home-grid{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:16px;align-items:start}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:14px 16px;transition:transform .25s var(--ease),border-color .25s}
+.stat:hover{transform:translateY(-3px);border-color:var(--accent)}
+.stat small{display:block;color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.stat b{font-family:var(--font-h);font-size:17px;display:block;margin-top:4px}
+.sect-h{display:flex;align-items:center;justify-content:space-between;margin:6px 0 12px}
+.sect-h h3{font-size:18px;letter-spacing:.06em;text-transform:uppercase}
+.link-btn{color:var(--pink);font-size:13px;font-weight:600}
+.link-btn:hover{text-decoration:underline}
+
+/* Project cards */
+.cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.cards.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pcard{position:relative;display:flex;flex-direction:column;text-align:left;background:var(--panel);border:1px solid var(--border);border-radius:24px;overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s,border-color .3s;width:100%}
+.pcard:hover,.pcard:focus-visible{transform:translateY(-6px);border-color:var(--pink);box-shadow:0 18px 40px rgba(0,0,0,.4),0 0 28px rgba(185,76,89,.35)}
+.pvis{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--elev)}
+.pvis .art{position:absolute;inset:0;transition:transform .6s var(--ease)}
+.pcard:hover .art{transform:scale(1.08)}
+.pvis img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pvis .tag{position:absolute;top:12px;left:12px;z-index:2}
+.pbody{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pbody h4{font-size:19px}
+.pbody .cat{font-size:11px;letter-spacing:.1em;color:var(--pink);text-transform:uppercase;font-weight:600}
+.pbody p{color:var(--muted);font-size:13.5px;flex:1}
+.mission{margin-top:10px;display:inline-flex;align-items:center;gap:8px;font-family:var(--font-h);font-weight:700;font-size:12px;letter-spacing:.14em;color:var(--pink)}
+.mission svg{transition:transform .25s}
+.pcard:hover .mission svg{transform:translateX(5px)}
+
+/* Side list */
+.mini{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px;border-radius:16px;background:var(--elev);border:1px solid transparent;margin-bottom:8px;transition:.2s}
+.mini:hover{border-color:var(--accent);transform:translateX(3px)}
+.mini .th{width:44px;height:44px;border-radius:12px;flex:none;overflow:hidden;position:relative}
+.mini b{font-family:var(--font-h);display:block;font-size:14px}
+.mini small{color:var(--muted);font-size:12px}
+.mini .chev{margin-left:auto;color:var(--muted)}
+.orb-wrap{display:grid;place-items:center;padding:6px 0 10px}
+.orb{width:170px;height:170px;display:grid;place-items:center;text-align:center;border-radius:46% 54% 52% 48%/50% 44% 56% 50%;background:radial-gradient(circle at 30% 25%,#f3b8b6,#b94c59 45%,#52202a 90%);box-shadow:0 0 50px rgba(185,76,89,.5),inset 0 0 30px rgba(0,0,0,.35);animation:morph 9s ease-in-out infinite}
+.orb b{font-family:var(--font-h);font-size:28px;display:block}
+.orb small{font-size:10px;letter-spacing:.14em;color:#ffe3e1}
+@keyframes morph{50%{border-radius:55% 45% 42% 58%/45% 56% 44% 55%;transform:rotate(8deg)}}
+.focus-list{list-style:none;display:grid;gap:8px}
+.focus-list li{display:flex;gap:10px;align-items:center;background:var(--elev);border-radius:12px;padding:8px 12px;font-size:13.5px}
+.profile-card{display:flex;gap:14px;align-items:center}
+.profile-card .avatar{width:58px;height:58px;font-size:20px;flex:none;cursor:default}
+.quick{display:grid;gap:8px}
+.quick a,.quick button{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:14px;background:var(--elev);border:1px solid transparent;transition:.2s;font-weight:500;text-align:left;width:100%}
+.quick a:hover,.quick button:hover{border-color:var(--accent);transform:translateX(3px)}
+.quick .off{opacity:.55}
+
+/* Projects */
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+.field{display:flex;align-items:center;gap:10px;height:46px;padding:0 16px;background:var(--bg);border:1px solid var(--border);border-radius:999px;flex:1 1 240px;max-width:420px}
+.field:focus-within{border-color:var(--pink)}
+.field input{flex:1;min-width:0;background:none;border:0;outline:none;color:var(--text);font:inherit}
+.field input::placeholder{color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--border);font-family:var(--font-h);font-weight:600;font-size:12px;letter-spacing:.1em;color:var(--muted);transition:.2s}
+.tab:hover{color:var(--text);border-color:var(--accent)}
+.tab[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 18px rgba(185,76,89,.45)}
+.empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:20px}
+
+/* Detail */
+.detail-hero{border-radius:28px;overflow:hidden;position:relative;min-height:230px;display:flex;align-items:flex-end;padding:26px;border:1px solid var(--border)}
+.detail-hero .art{position:absolute;inset:0}
+.detail-hero .shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(36,17,22,.92),rgba(36,17,22,.1) 70%)}
+.detail-hero > div.in{position:relative;z-index:2}
+.detail-hero h1{font-size:clamp(28px,4vw,42px)}
+.detail-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;margin-top:16px;align-items:start}
+.feat{list-style:none;display:grid;gap:8px}
+.feat li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--elev);font-size:14px}
+.feat li .chip{margin-left:auto}
+.stack{display:flex;gap:8px;flex-wrap:wrap}
+.note{font-size:12.5px;color:var(--muted);border-left:3px solid var(--accent);padding:6px 12px;margin-top:10px;background:rgba(0,0,0,.18);border-radius:0 10px 10px 0}
+
+/* Skills */
+.skill-cat h3{color:var(--pink)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border-radius:18px;background:var(--elev);border:1px solid var(--border);transition:.25s var(--ease);font-weight:500;font-size:13px;text-align:center}
+.tile:hover{transform:translateY(-4px);border-color:var(--pink);box-shadow:0 0 22px rgba(185,76,89,.35)}
+.tile .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-family:var(--font-h);font-weight:700;font-size:14px;background:linear-gradient(135deg,var(--accent),#6d2531);color:#fff}
+.bar{height:8px;border-radius:99px;background:var(--bg);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,var(--accent),var(--pink));border-radius:99px}
+
+/* About / Trophies / Resume */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.timeline{list-style:none;position:relative;padding-left:22px;display:grid;gap:14px}
+.timeline::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.timeline li{position:relative}
+.timeline li::before{content:"";position:absolute;left:-22px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.timeline b{font-family:var(--font-h)}
+.char{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.char .big{width:96px;height:96px;border-radius:28px;display:grid;place-items:center;font-family:var(--font-h);font-size:34px;font-weight:700;background:linear-gradient(135deg,var(--pink),var(--accent));color:#2a0f15;box-shadow:0 0 36px rgba(185,76,89,.5)}
+.trophy{display:flex;flex-direction:column;gap:8px;align-items:flex-start;transition:.3s var(--ease)}
+.trophy:hover{transform:translateY(-5px);border-color:var(--pink);box-shadow:0 0 28px rgba(185,76,89,.35)}
+.trophy .badge{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:radial-gradient(circle at 30% 30%,var(--pink),var(--accent) 60%,#5e2330);box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.trophy.locked{opacity:.75;border-style:dashed}
+.trophy.locked .badge{background:var(--elev);box-shadow:none}
+.res-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px}
+.res-item{padding:10px 0;border-bottom:1px solid var(--border)}
+.res-item:last-child{border:0}
+
+/* Contact / Settings */
+form{display:grid;gap:14px}
+label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;display:block;margin-bottom:6px}
+.in{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:12px 14px;color:var(--text);font:inherit;outline:none;transition:.2s}
+.in:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(232,163,166,.18)}
+.in[aria-invalid="true"]{border-color:#ff8a8a}
+textarea.in{min-height:130px;resize:vertical}
+.err{color:#ffb0b0;font-size:12.5px;min-height:18px;margin-top:4px}
+.feedback{padding:12px 14px;border-radius:14px;background:rgba(232,163,166,.14);border:1px solid var(--pink);font-size:14px}
+.feedback.bad{background:rgba(255,120,120,.12);border-color:#ff8a8a}
+.term{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--pink);margin-bottom:10px}
+.setting{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--border)}
+.setting:last-of-type{border:0}
+.setting b{font-family:var(--font-h);display:block}
+.setting small{color:var(--muted)}
+.switch{position:relative;width:52px;height:30px;border-radius:99px;background:var(--bg);border:1px solid var(--border);flex:none;transition:.25s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--muted);transition:transform .25s var(--ease),background .25s}
+.switch[aria-checked="true"]{background:var(--accent);border-color:var(--pink)}
+.switch[aria-checked="true"]::after{transform:translateX(22px);background:#fff}
+.switch[disabled]{opacity:.4;cursor:not-allowed}
+
+/* Overlays */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(20,8,11,.72);backdrop-filter:blur(6px);display:grid;place-items:start center;padding:12vh 16px 16px;animation:fade .2s}
+.overlay.center{place-items:center;padding:16px}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(560px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--shell);border:1px solid var(--border);border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:rise .3s var(--ease)}
+.modal-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 22px;border-bottom:1px solid var(--border)}
+.modal-h h3{font-size:20px}
+.modal-b{padding:20px 22px 24px;display:grid;gap:14px}
+.x{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--muted)}
+.x:hover{background:var(--elev);color:var(--text)}
+.pal{padding:0;overflow:hidden}
+.pal-in{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.pal-in input{flex:1;background:none;border:0;outline:none;color:var(--text);font:inherit;font-size:16px;min-width:0}
+.pal-list{list-style:none;max-height:min(46vh,340px);overflow:auto;padding:8px}
+.pal-list li{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;cursor:pointer;color:var(--muted)}
+.pal-list li small{margin-left:auto;font-size:11px;letter-spacing:.08em}
+.pal-list li[aria-selected="true"]{background:rgba(185,76,89,.4);color:var(--text)}
+.pal-foot{padding:10px 18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+.toasts{position:fixed;right:18px;bottom:18px;z-index:200;display:grid;gap:8px;pointer-events:none}
+.toast{background:var(--elev);border:1px solid var(--pink);padding:12px 16px;border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.5);animation:rise .3s var(--ease);max-width:min(340px,calc(100vw - 36px));font-size:14px}
+.toast.out{opacity:0;transform:translateY(8px);transition:.3s}
+
+/* Launch */
+.launch{position:fixed;inset:0;z-index:300;background:var(--bg);display:grid;place-items:center;transition:opacity .5s,visibility .5s}
+.launch.done{opacity:0;visibility:hidden;pointer-events:none}
+.launch-in{text-align:center}
+.launch-in .logo-mark{width:72px;height:72px;font-size:30px;margin:0 auto 18px;animation:float 3s ease-in-out infinite}
+.launch-in h1{font-size:30px;letter-spacing:.2em}
+.launch-bar{width:220px;height:4px;border-radius:99px;background:var(--panel);margin:18px auto 14px;overflow:hidden}
+.launch-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--pink));animation:load 1.5s var(--ease) forwards;width:0}
+@keyframes load{to{width:100%}}
+
+/* Responsive */
+@media (max-width:1180px){
+  .app{--sb:76px}
+  .nav a span.lbl,.logo span.lbl,.side-foot .lbl{display:none}
+  .nav a{justify-content:center;padding:0}.logo{justify-content:center;padding:4px 0 14px}
+  .nav a::after{display:block}
+  .nav a:hover::after,.nav a:focus-visible::after{opacity:1;transform:translate(0,-50%)}
+  .home-grid,.detail-grid,.res-grid{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .cards.three{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  body{font-size:14.5px}
+  .app{display:block;padding:8px 8px 84px}
+  .sidebar{position:fixed;left:8px;right:8px;bottom:8px;top:auto;height:auto;z-index:50;flex-direction:row;padding:6px;border-radius:22px;gap:0}
+  .logo,.side-foot,.nav-ind{display:none}
+  .nav{flex-direction:row;justify-content:space-between;gap:0;width:100%}
+  .nav a{flex:1;min-width:0;height:48px;padding:0}
+  .nav a::after{display:none!important}
+  .stage{padding:14px 14px 22px;border-radius:22px;min-height:calc(100vh - 100px)}
+  .search-btn{min-width:0;flex:1 1 100%;order:5}.search-btn .kbd{display:none}
+  .status{font-size:10px;padding:0 10px}
+  .crumb h2{font-size:20px}
+  .hero{padding:24px 20px;min-height:340px;align-items:flex-end}
+  .hero-art{width:100%;right:-20%;top:-10%;opacity:.35}
+  .stats,.two,.cards.three{grid-template-columns:1fr 1fr}
+  .two{grid-template-columns:1fr}
+  .cards.three{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr}
+  .btn{flex:1 1 auto}
+  .char{grid-template-columns:1fr;text-align:left}
+  .overlay{padding-top:8vh}
+  .toasts{bottom:92px;right:10px}
+}
+</style>
+</head>
+<body>
+<a class="sr" href="#view" id="skip">Skip to content</a>
+
+<div class="launch" id="launch" role="presentation">
+  <div class="launch-in">
+    <div class="logo-mark">J</div>
+    <h1>JUNAID.OS</h1>
+    <div class="launch-bar"><i></i></div>
+    <button class="btn sec" id="launch-skip" type="button">SKIP</button>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar" aria-label="Primary">
+    <div class="logo"><div class="logo-mark" aria-hidden="true">J</div><span class="lbl">JUNAID<b>.OS</b></span></div>
+    <nav class="nav" id="nav" aria-label="Main navigation"><div class="nav-ind" id="nav-ind"></div></nav>
+    <div class="side-foot"><span class="dot"></span><span class="lbl">Prototype build</span></div>
+  </aside>
+
+  <div class="stage">
+    <header class="topbar">
+      <div class="crumb"><small id="crumb"></small><h2 id="page-title">Home</h2></div>
+      <button class="search-btn" id="open-pal" type="button" aria-label="Open command palette">
+        <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span>Search or jump to…</span><span class="kbd" id="kbd-hint">Ctrl K</span>
+      </button>
+      <div class="status glow-on" title="Click the text to edit this placeholder"><span class="dot"></span><span id="status-text" contenteditable="true" spellcheck="false" role="textbox" aria-label="Availability status (editable)">OPEN TO OPPORTUNITIES</span></div>
+      <button class="avatar" id="avatar" type="button" aria-label="Open player profile">JK</button>
+    </header>
+    <main id="view" tabindex="-1" aria-live="polite"></main>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div id="overlay-root"></div>
+
+<script>
+"use strict";
+/* ===================== CONFIGURATION (edit freely) ===================== */
+const CONFIG = {
+  name: "Junaid Khan",
+  initials: "JK",
+  email: "your-email@example.com",          // TODO: replace with real email
+  github: "",                                // TODO: e.g. "https://github.com/your-username"
+  linkedin: "",                              // TODO: e.g. "https://linkedin.com/in/your-handle"
+  resumeUrl: "",                             // TODO: e.g. "assets/Junaid-Khan-Resume.pdf" (leave empty until a real PDF exists)
+  statusText: "OPEN TO OPPORTUNITIES"
+};
+
+/* ===================== DATA ===================== */
+const PROJECTS = [
+  {
+    id: "bookmybrix", name: "BookMyBrix", category: "Booking Platform", filters: ["frontend"],
+    status: "LIVE", hue: [352, 20], glyph: "B",
+    tech: ["React", "Vite"],
+    live: "https://book-my-brix.vercel.app/", repo: "",
+    short: "A booking-platform frontend project.",
+    overview: "A booking-platform frontend project built with React and Vite and deployed on Vercel.",
+    problem: "Booking flows need a clear, fast interface. (Configurable: add the specific problem this project targets.)",
+    solution: "A React + Vite frontend that presents the booking experience. (Configurable: add verified solution details.)",
+    features: [
+      { t: "Frontend built with React and Vite", done: true },
+      { t: "Deployed live on Vercel", done: true },
+      { t: "Add further verified features here", done: false }
+    ],
+    contribution: "Frontend development. (Configurable: refine to describe your exact contribution.)"
+  },
+  {
+    id: "ecommerce", name: "E-Commerce Store", category: "Frontend Web Application", filters: ["frontend"],
+    status: "LIVE", hue: [14, 340], glyph: "E",
+    tech: ["React / JavaScript"],
+    live: "https://code-alpha-e-commerce-store-omega.vercel.app/", repo: "",
+    short: "An e-commerce storefront frontend project.",
+    overview: "An e-commerce storefront frontend project deployed on Vercel.",
+    problem: "Online shops need a browsable, responsive storefront. (Configurable.)",
+    solution: "A React / JavaScript storefront frontend. (Configurable: add verified details.)",
+    features: [
+      { t: "Storefront frontend in React / JavaScript", done: true },
+      { t: "Deployed live on Vercel", done: true },
+      { t: "Add further verified features here", done: false }
+    ],
+    contribution: "Frontend development. (Configurable: refine to describe your exact contribution.)"
+  },
+  {
+    id: "sihignite", name: "SIH Ignite", category: "Hackathon Problem Discovery Portal", filters: ["hackathon", "fullstack"],
+    status: "LIVE", hue: [335, 8], glyph: "S",
+    tech: [],
+    live: "https://sihignite.netlify.app/", repo: "",
+    short: "A portal for exploring Smart India Hackathon problem statements.",
+    overview: "A portal for exploring Smart India Hackathon problem statements, deployed on Netlify.",
+    problem: "Finding a suitable problem statement among many is time-consuming. (Configurable.)",
+    solution: "A portal for exploring Smart India Hackathon problem statements. (Configurable: add verified details.)",
+    features: [
+      { t: "Portal for exploring Smart India Hackathon problem statements", done: true },
+      { t: "Deployed live on Netlify", done: true },
+      { t: "Add further verified features here", done: false }
+    ],
+    contribution: "Configurable: describe your contribution to this project."
+  },
+  {
+    id: "campusos", name: "CampusOS", category: "University Management Concept", filters: ["fullstack"],
+    status: "CONCEPT", hue: [345, 30], glyph: "C",
+    tech: ["MongoDB"],
+    live: "", repo: "",
+    short: "A proposed centralized university operations platform for room booking and event management.",
+    overview: "A proposed centralized university operations platform for room booking and event management. Built as a team concept with Team Algorists. This is a concept / prototype, not a completed implementation.",
+    problem: "University rooms and events are often managed in scattered ways. (Configurable.)",
+    solution: "A single platform to handle room booking and event management. (Proposed — not yet verified as implemented.)",
+    features: [
+      { t: "Centralized room booking", done: false },
+      { t: "Event management", done: false },
+      { t: "Update this list as features are actually built", done: false }
+    ],
+    contribution: "Team project with Team Algorists. (Configurable: describe your exact role.)"
+  }
+];
+
+const SKILL_GROUPS = [
+  { name: "Core Languages", items: ["JavaScript", "Java", "Python", "SQL"] },
+  { name: "Frontend", items: ["HTML", "CSS", "React.js", "Next.js"] },
+  { name: "Backend & Data", items: ["Node.js", "Express.js", "MongoDB", "REST APIs", "Authentication / JWT"] },
+  { name: "Tools", items: ["Git & GitHub", "Vercel", "Cloudinary"] }
+];
+/* Configurable descriptions and related projects. Only link projects where the tech is stated. */
+const SKILL_INFO = {
+  "JavaScript": { d: "Core language for web interfaces and Node.js. (Configurable description.)", p: ["ecommerce"] },
+  "React.js": { d: "Component-based UI development. (Configurable description.)", p: ["bookmybrix", "ecommerce"] },
+  "MongoDB": { d: "Document database. (Configurable description.)", p: ["campusos"] },
+  "Vercel": { d: "Hosting and deployment for frontend projects. (Configurable description.)", p: ["bookmybrix", "ecommerce"] }
+};
+
+const ACHIEVEMENTS = [
+  { title: "TechNeekX Hackathon Recognition", desc: "Recognition from the TechNeekX internal hackathon.", date: "", image: "", locked: false },
+  { title: "Best Lead", desc: "Best Lead award from the TechNeekX internal hackathon.", date: "", image: "", locked: false },
+  { title: "Best Team", desc: "Best Team recognition from the TechNeekX internal hackathon.", date: "", image: "", locked: false },
+  { title: "Community Contributions", desc: "Website development and team coordination for the TechNeekX community.", date: "", image: "", locked: false },
+  { title: "Mentoring & Teamwork", desc: "Mentoring community members and collaborating with teams.", date: "", image: "", locked: false },
+  { title: "Certifications", desc: "Placeholder — add real certifications here when available.", date: "", image: "", locked: true }
+];
+
+const PROFILE = {
+  summary: "Full Stack Developer working with the MERN stack, Java and DSA. I build modern web experiences, develop practical applications, and solve problems through code.",
+  degree: "BCA, Data Science & AI",
+  institution: "Babu Banarasi Das University, Lucknow",
+  role: "Frontend Lead / Core Team at TechNeekX",
+  highlights: ["Website development", "Team coordination", "Mentoring", "Frontend development", "Hackathon participation"],
+  journey: [
+    { t: "Studying BCA (Data Science & AI)", d: "Babu Banarasi Das University, Lucknow." },
+    { t: "Building web projects", d: "BookMyBrix, E-Commerce Store and SIH Ignite are live deployments." },
+    { t: "TechNeekX community", d: "Frontend Lead / Core Team — website development, coordination and mentoring." },
+    { t: "CampusOS concept", d: "Team project with Team Algorists." }
+  ],
+  interests: ["Web development", "Data structures & algorithms", "Practical applications", "Mentoring"]
+};
+
+/* ===================== NAVIGATION CONFIG ===================== */
+const ICONS = {
+  home: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+  projects: '<rect x="3" y="6" width="18" height="12" rx="4"/><path d="M8 10v4M6 12h4"/><circle cx="16" cy="11" r=".8"/><circle cx="18" cy="13" r=".8"/>',
+  skills: '<path d="M12 3 4 7v6c0 4 3.5 7 8 8 4.5-1 8-4 8-8V7z"/><path d="m9 12 2 2 4-4"/>',
+  about: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+  trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4v1a3 3 0 0 0 4 3M16 6h4v1a3 3 0 0 1-4 3M12 13v4M8 21h8M10 17h4"/>',
+  resume: '<path d="M7 3h8l4 4v14H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 8 8 6 8-6"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  gh: '<path d="M9 19c-4 1.2-4-2-6-2m12 4v-3.3c0-1 .1-1.400-.5-2 2.800-.3 5.500-1.400 5.500-6a4.600 4.600 0 0 0-1.300-3.200 4.200 4.200 0 0 0-.1-3.200s-1.100-.3-3.500 1.300a12 12 0 0 0-6.200 0C6.500 2.800 5.400 3.100 5.400 3.100a4.200 4.200 0 0 0-.1 3.200A4.600 4.600 0 0 0 4 9.500c0 4.600 2.700 5.700 5.500 6-.6.600-.6 1.200-.5 2V21"/>',
+  in: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+  x: '<path d="M6 6l12 12M18 6 6 18"/>',
+  star: '<path d="m12 3 2.700 5.600 6.100.9-4.400 4.300 1 6.100L12 17l-5.400 2.900 1-6.100L3.200 9.500l6.100-.9z"/>',
+  lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'
+};
+function icon(name){
+  const s = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  s.setAttribute("viewBox","0 0 24 24"); s.setAttribute("class","i"); s.setAttribute("aria-hidden","true");
+  s.innerHTML = ICONS[name] || ""; // constant, trusted strings only
+  return s;
+}
+const NAV = [
+  { path: "/",             label: "Home",                    title: "Command Center",   icon: "home" },
+  { path: "/projects",     label: "Projects",                title: "Mission Select",   icon: "projects" },
+  { path: "/skills",       label: "Skills / Arsenal",        title: "Skill Arsenal",    icon: "skills" },
+  { path: "/about",        label: "About / Player Profile",  title: "Player Profile",   icon: "about" },
+  { path: "/achievements", label: "Achievements / Trophy Room", title: "Trophy Room",   icon: "trophy" },
+  { path: "/resume",       label: "Resume",                  title: "Resume",           icon: "resume" },
+  { path: "/contact",      label: "Contact",                 title: "Comms Terminal",   icon: "mail" },
+  { path: "/settings",     label: "Settings",                title: "Settings",         icon: "gear" }
+];
+const SHORT = { "/skills":"Skills","/about":"About","/achievements":"Achievements" };
+
+/* ===================== UTILITIES ===================== */
+function h(tag, props, ...kids){
+  const el = document.createElement(tag);
+  if (props) for (const k in props){
+    const v = props[k];
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k === "text") el.textContent = v;
+    else if (k === "style") el.style.cssText = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()){
+    if (kid == null || kid === false) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+function getProject(id){ return PROJECTS.find(p => p.id === id); }
+function isHttp(u){ return /^https?:\/\//i.test(u || ""); }
+function stagger(root){ root.querySelectorAll("[data-s]").forEach((el,i) => el.style.setProperty("--i", Math.min(i, 14))); }
+
+/* Safe storage */
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+
+/* ===================== SETTINGS ===================== */
+const DEFAULTS = { sound: false, reduce: false, glow: true, compact: false };
+let settings = Object.assign({}, DEFAULTS);
+function loadSettings(){
+  const raw = store.get("junaidos.settings");
+  if (raw) { try { Object.assign(settings, JSON.parse(raw)); } catch(e){} }
+}
+function saveSettings(){ store.set("junaidos.settings", JSON.stringify(settings)); }
+function applySettings(){
+  document.body.classList.toggle("reduce", !!settings.reduce);
+  document.body.classList.toggle("no-glow", !settings.glow);
+  document.body.classList.toggle("compact", !!settings.compact && window.innerWidth > 1180);
+  moveIndicator();
+}
+function reducedMotion(){
+  return settings.reduce || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
+
+/* Sound (opt-in, tiny synthesized blip, never autoplays) */
+let audioCtx = null;
+function blip(freq){
+  if (!settings.sound) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = "sine"; o.frequency.value = freq || 520;
+    g.gain.value = 0.0001; g.gain.exponentialRampToValueAtTime(0.05, audioCtx.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.14);
+    o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + 0.15);
+  } catch(e){}
+}
+
+/* ===================== TOASTS & MODALS ===================== */
+function toast(msg){
+  const t = h("div", { class: "toast", role: "status", text: msg });
+  document.getElementById("toasts").append(t);
+  setTimeout(() => { t.classList.add("out"); setTimeout(() => t.remove(), 320); }, 2600);
+}
+let overlayStack = [];
+function openOverlay(node, opts){
+  opts = opts || {};
+  const root = document.getElementById("overlay-root");
+  const ov = h("div", { class: "overlay" + (opts.center ? " center" : "") }, node);
+  const prev = document.activeElement;
+  const entry = { ov, prev };
+  ov.addEventListener("mousedown", e => { if (e.target === ov) closeOverlay(entry); });
+  root.append(ov); overlayStack.push(entry);
+  const f = ov.querySelector("[data-autofocus]") || ov.querySelector("button,input,a[href]");
+  if (f) setTimeout(() => f.focus(), 30);
+  return entry;
+}
+function closeOverlay(entry){
+  entry = entry || overlayStack[overlayStack.length - 1];
+  if (!entry) return;
+  entry.ov.remove();
+  overlayStack = overlayStack.filter(e => e !== entry);
+  if (entry.prev && entry.prev.focus) try { entry.prev.focus(); } catch(e){}
+}
+function modal(title, body){
+  let entry;
+  const m = h("div", { class: "modal", role: "dialog", "aria-modal": "true", "aria-label": title },
+    h("div", { class: "modal-h" }, h("h3", { text: title }),
+      h("button", { class: "x", type: "button", "aria-label": "Close", "data-autofocus": "", onclick: () => closeOverlay(entry) }, icon("x"))),
+    h("div", { class: "modal-b" }, body));
+  entry = openOverlay(m, { center: true });
+  return entry;
+}
+
+/* ===================== VISUAL PLACEHOLDERS ===================== */
+function artFor(p, big){
+  const [a, b] = p.hue;
+  const wrap = h("div", { class: "art" });
+  wrap.style.background = `linear-gradient(135deg,hsl(${a} 55% 38%),hsl(${b} 60% 20%))`;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("viewBox","0 0 400 250"); svg.setAttribute("preserveAspectRatio","xMidYMid slice");
+  svg.setAttribute("aria-hidden","true"); svg.style.cssText = "width:100%;height:100%;display:block";
+  svg.innerHTML = `
+    <defs><radialGradient id="g${p.id}" cx="70%" cy="30%" r="60%"><stop offset="0" stop-color="#F7F1ED" stop-opacity=".35"/><stop offset="1" stop-color="#F7F1ED" stop-opacity="0"/></radialGradient></defs>
+    <rect width="400" height="250" fill="url(#g${p.id})"/>
+    <g fill="none" stroke="#F7F1ED" stroke-opacity=".18" stroke-width="1.5">
+      <path d="M-20 200 L120 80 L240 190 L420 40"/><circle cx="310" cy="95" r="70"/><circle cx="310" cy="95" r="44"/>
+      <rect x="40" y="40" width="90" height="60" rx="14"/><rect x="60" y="120" width="130" height="80" rx="16"/>
+    </g>
+    <text x="30" y="${big ? 215 : 205}" font-family="Space Grotesk,Segoe UI,sans-serif" font-weight="700" font-size="${big ? 150 : 130}" fill="#F7F1ED" fill-opacity=".16"></text>`;
+  svg.querySelector("text").textContent = p.glyph;
+  wrap.append(svg);
+  return wrap;
+}
+function thumb(p){
+  const t = h("div", { class: "th" });
+  t.style.background = `linear-gradient(135deg,hsl(${p.hue[0]} 55% 42%),hsl(${p.hue[1]} 60% 22%))`;
+  t.append(h("div", { style: "position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-h);font-weight:700;color:#F7F1ED", text: p.glyph }));
+  return t;
+}
+
+/* ===================== COMPONENTS ===================== */
+function projectCard(p){
+  const card = h("button", { class: "pcard", type: "button", "data-s": "", "aria-label": `Open mission: ${p.name}`, onclick: () => { blip(620); navigate("/projects/" + p.id); } },
+    h("div", { class: "pvis" }, artFor(p), h("span", { class: "chip tag " + (p.status === "LIVE" ? "live" : "warn"), text: p.status })),
+    h("div", { class: "pbody" },
+      h("span", { class: "cat", text: p.category }),
+      h("h4", { text: p.name }),
+      h("p", { text: p.short }),
+      h("span", { class: "mission" }, "OPEN MISSION", icon("arrow"))));
+  return card;
+}
+function extLink(label, url, ico, cls){
+  if (isHttp(url)) return h("a", { class: cls || "btn red", href: url, target: "_blank", rel: "noopener noreferrer" }, ico ? icon(ico) : null, label);
+  return null;
+}
+function copyText(text){
+  const done = () => toast("Copied: " + text);
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+  } else fallbackCopy(text, done);
+}
+function fallbackCopy(text, done){
+  const ta = h("textarea", { style: "position:fixed;opacity:0;top:0" });
+  ta.value = text; document.body.append(ta); ta.select();
+  let ok = false; try { ok = document.execCommand("copy"); } catch(e){}
+  ta.remove();
+  if (ok) done(); else toast("Copy failed — select the address manually.");
+}
+
+/* ===================== VIEWS ===================== */
+function viewHome(){
+  const root = h("div", { class: "grid", style: "gap:18px" });
+
+  const hero = h("section", { class: "hero glow-on", "data-s": "", "aria-label": "Introduction" },
+    h("div", { class: "hero-art", "aria-hidden": "true" }),
+    h("div", { class: "hero-copy" },
+      h("div", { class: "eyebrow", text: "GOOD EVENING, PLAYER." }),
+      h("h1", { text: "Hey, I'm Junaid Khan." }),
+      h("div", { class: "role", text: "Full Stack Developer | MERN Stack | Java & DSA" }),
+      h("p", { text: "I build modern web experiences, develop practical applications, and solve problems through code." }),
+      h("div", { class: "row" },
+        h("button", { class: "btn pri", type: "button", onclick: () => navigate("/projects") }, "EXPLORE PROJECTS"),
+        h("button", { class: "btn sec", type: "button", onclick: () => navigate("/contact") }, "CONTACT ME"))));
+  hero.querySelector(".hero-art").innerHTML = `
+    <svg viewBox="0 0 400 320" preserveAspectRatio="xMidYMid slice">
+      <g class="spin" style="transform-origin:260px 160px"><polygon points="260,40 364,100 364,220 260,280 156,220 156,100" fill="none" stroke="#F7F1ED" stroke-opacity=".28" stroke-width="2"/>
+      <polygon points="260,76 333,118 333,202 260,244 187,202 187,118" fill="none" stroke="#F7F1ED" stroke-opacity=".18" stroke-width="2" stroke-dasharray="6 8"/></g>
+      <g class="float"><rect x="190" y="110" width="150" height="100" rx="18" fill="#241116" fill-opacity=".7" stroke="#E8A3A6" stroke-opacity=".6"/>
+      <circle cx="208" cy="128" r="4" fill="#E8A3A6"/><circle cx="222" cy="128" r="4" fill="#F7F1ED" fill-opacity=".6"/><circle cx="236" cy="128" r="4" fill="#B94C59"/>
+      <text x="265" y="190" text-anchor="middle" font-family="Space Grotesk,monospace" font-weight="700" font-size="42" fill="#F7F1ED">&lt;/&gt;</text></g>
+      <circle cx="360" cy="60" r="34" fill="#E8A3A6" fill-opacity=".18"/><circle cx="130" cy="270" r="22" fill="#F7F1ED" fill-opacity=".12"/>
+    </svg>`;
+
+  const stats = h("div", { class: "stats" },
+    [["Featured Projects","3 Missions"],["Core Stack","MERN"],["Community","TechNeekX"],["Focus","Web Dev & DSA"]]
+      .map(([k,v]) => h("div", { class: "stat", "data-s": "" }, h("small", { text: k }), h("b", { text: v }))));
+
+  const featured = PROJECTS.slice(0, 3);
+  const left = h("div", { class: "grid", style: "gap:14px;min-width:0" },
+    stats,
+    h("div", { class: "sect-h" }, h("h3", { text: "Featured Projects" }), h("button", { class: "link-btn", type: "button", onclick: () => navigate("/projects") }, "See all")),
+    h("div", { class: "cards three" }, featured.map(projectCard)));
+
+  const right = h("div", { class: "grid", style: "gap:16px;min-width:0" },
+    h("section", { class: "panel", "data-s": "" },
+      h("h3", {}, "Current Focus", h("small", { text: "EDITABLE" })),
+      h("div", { class: "orb-wrap" }, h("div", { class: "orb glow-on" }, h("div", {}, h("b", { text: "MERN" }), h("small", { text: "CORE STACK" })))),
+      h("ul", { class: "focus-list" }, ["Web development", "Data structures & algorithms", "Frontend leadership at TechNeekX"].map(t => h("li", {}, h("span", { class: "dot" }), t)))),
+    h("section", { class: "panel", "data-s": "" },
+      h("h3", { text: "Recently Updated" }),
+      PROJECTS.map(p => h("button", { class: "mini", type: "button", onclick: () => navigate("/projects/" + p.id) },
+        thumb(p), h("div", {}, h("b", { text: p.name }), h("small", { text: p.status === "CONCEPT" ? "Concept / prototype" : "Live deployment" })), h("span", { class: "chev" }, icon("arrow"))))),
+    h("section", { class: "panel", "data-s": "" },
+      h("h3", { text: "Quick Links" }),
+      h("div", { class: "quick" }, linkRow("GitHub", CONFIG.github, "gh"), linkRow("LinkedIn", CONFIG.linkedin, "in"))),
+    h("section", { class: "panel", "data-s": "" },
+      h("h3", { text: "Player Card" }),
+      h("div", { class: "profile-card" }, h("div", { class: "avatar", text: CONFIG.initials }),
+        h("div", {}, h("b", { style: "font-family:var(--font-h)", text: CONFIG.name }), h("div", { class: "muted", style: "font-size:13px", text: PROFILE.degree }), h("div", { class: "muted", style: "font-size:13px", text: "Frontend Lead, TechNeekX" })))));
+
+  root.append(hero, h("div", { class: "home-grid" }, left, right));
+  return root;
+}
+function linkRow(label, url, ico){
+  if (isHttp(url)) return h("a", { href: url, target: "_blank", rel: "noopener noreferrer" }, icon(ico), label, h("span", { style: "margin-left:auto" }, icon("ext")));
+  return h("button", { type: "button", class: "off", onclick: () => toast(label + " URL not configured yet — set it in CONFIG.") }, icon(ico), label, h("span", { class: "chip warn", style: "margin-left:auto", text: "NOT SET" }));
+}
+
+/* Projects */
+let projState = { q: "", f: "all" };
+function viewProjects(){
+  const root = h("div", {});
+  const grid = h("div", { class: "cards", id: "pgrid" });
+  const count = h("p", { class: "muted", style: "margin-bottom:12px;font-size:13px", "aria-live": "polite" });
+  const input = h("input", { type: "search", placeholder: "Search by name or technology…", "aria-label": "Search projects", value: projState.q });
+  const tabsDef = [["all","ALL"],["frontend","FRONTEND"],["fullstack","FULL STACK"],["hackathon","HACKATHON"]];
+  const tabs = h("div", { class: "tabs", role: "tablist", "aria-label": "Project categories" });
+  function paint(){
+    tabs.replaceChildren(...tabsDef.map(([k,l]) => h("button", { class: "tab", role: "tab", type: "button", "aria-selected": String(projState.f === k), onclick: () => { projState.f = k; blip(480); paint(); } }, l)));
+    const q = projState.q.trim().toLowerCase();
+    const list = PROJECTS.filter(p => (projState.f === "all" || p.filters.includes(projState.f)) &&
+      (!q || (p.name + " " + p.category + " " + p.tech.join(" ")).toLowerCase().includes(q)));
+    grid.replaceChildren(...(list.length ? list.map(projectCard) : [h("div", { class: "empty", text: "No missions match your search. Try another keyword or filter." })]));
+    stagger(grid);
+    count.textContent = list.length + " of " + PROJECTS.length + " missions";
+  }
+  input.addEventListener("input", () => { projState.q = input.value; paint(); });
+  root.append(
+    h("div", { class: "sect-h" }, h("h3", { style: "font-size:26px", text: "MISSION SELECT" })),
+    h("div", { class: "toolbar" }, h("label", { class: "field" }, icon("search"), input), tabs),
+    count, grid);
+  paint();
+  return root;
+}
+function viewProject(id){
+  const p = getProject(id);
+  if (!p) return null;
+  const root = h("div", {});
+  const hero = h("section", { class: "detail-hero", "data-s": "" }, artFor(p, true), h("div", { class: "shade" }),
+    h("div", { class: "in" },
+      h("div", { class: "row", style: "margin-bottom:8px" }, h("span", { class: "chip " + (p.status === "LIVE" ? "live" : "warn"), text: p.status }), h("span", { class: "chip", text: p.category })),
+      h("h1", { text: p.name })));
+  const main = h("div", { class: "grid" },
+    h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Project Overview" }), h("p", { text: p.overview })),
+    h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Problem & Solution" }),
+      h("p", {}, h("b", { text: "Problem: " }), p.problem), h("p", { style: "margin-top:8px" }, h("b", { text: "Solution: " }), p.solution)),
+    h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Features" }),
+      h("ul", { class: "feat" }, p.features.map(f => h("li", {}, h("span", { text: f.t }), h("span", { class: "chip " + (f.done ? "live" : "warn"), text: f.done ? "IMPLEMENTED" : "PLANNED" })))),
+      h("p", { class: "note", text: "Implemented = visible in the deployed project. Planned = proposed or to be confirmed." })));
+  const side = h("div", { class: "grid" },
+    h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Technology Stack" }),
+      p.tech.length ? h("div", { class: "stack" }, p.tech.map(t => h("span", { class: "chip", text: t }))) : h("p", { class: "muted", text: "Not specified yet — add technologies to the project data." })),
+    h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Personal Contribution" }), h("p", { text: p.contribution })),
+    h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Links" }),
+      h("div", { class: "grid", style: "gap:10px" },
+        extLink("LIVE DEMO", p.live, "ext") || h("button", { class: "btn red off", type: "button", onclick: () => toast("No live demo — this is a concept / prototype.") }, "NO LIVE DEMO"),
+        extLink("GITHUB", p.repo, "gh", "btn sec"),
+        !isHttp(p.repo) ? h("p", { class: "muted", style: "font-size:12.5px", text: "GitHub button appears once a real repository URL is set in the project's repo field." }) : null,
+        h("button", { class: "btn sec", type: "button", onclick: () => navigate("/projects") }, icon("back"), "BACK TO LIBRARY"))));
+  root.append(hero, h("div", { class: "detail-grid" }, main, side));
+  return root;
+}
+
+/* Skills */
+function skillDetail(name, group){
+  const info = SKILL_INFO[name] || { d: "Configurable description — add details about how you use this skill.", p: [] };
+  const rel = info.p.map(getProject).filter(Boolean);
+  modal(name, [
+    h("span", { class: "chip", style: "justify-self:start", text: group }),
+    h("p", { text: info.d }),
+    h("div", {}, h("h4", { style: "margin-bottom:8px;font-size:13px;letter-spacing:.1em;color:var(--pink)", text: "RELATED PROJECTS / APPLICATIONS" }),
+      rel.length ? h("div", { class: "grid", style: "gap:8px" }, rel.map(p => h("button", { class: "mini", type: "button", style: "margin:0", onclick: () => { closeOverlay(); navigate("/projects/" + p.id); } }, thumb(p), h("div", {}, h("b", { text: p.name }), h("small", { text: p.category })), h("span", { class: "chev" }, icon("arrow")))))
+        : h("p", { class: "muted", text: "None linked yet — add related projects in SKILL_INFO." })),
+    h("p", { class: "note", text: "No proficiency level is shown; this prototype does not make unverified measurements." })
+  ]);
+}
+function viewSkills(){
+  const root = h("div", { class: "grid" },
+    h("div", { class: "sect-h" }, h("h3", { style: "font-size:26px", text: "SKILL ARSENAL" }), h("span", { class: "muted", style: "font-size:13px", text: "Select a tile to inspect" })),
+    h("div", { class: "grid", style: "grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))" },
+      SKILL_GROUPS.map(g => h("section", { class: "panel skill-cat", "data-s": "" },
+        h("h3", {}, g.name, h("small", { text: g.items.length + " SLOTS" })),
+        h("div", { class: "tiles" }, g.items.map(n => h("button", { class: "tile", type: "button", onclick: () => { blip(560); skillDetail(n, g.name); } },
+          h("span", { class: "ic", "aria-hidden": "true", text: n.replace(/[^A-Za-z]/g, "").slice(0, 2) }), n)))))));
+  return root;
+}
+
+/* About */
+function viewAbout(){
+  const sec = (t, ...c) => h("section", { class: "panel", "data-s": "" }, h("h3", { text: t }), ...c);
+  return h("div", { class: "grid" },
+    h("section", { class: "panel glow-on", "data-s": "", style: "background:linear-gradient(120deg,var(--elev),var(--panel))" },
+      h("div", { class: "char" }, h("div", { class: "big", text: CONFIG.initials }),
+        h("div", {}, h("div", { class: "eyebrow", style: "color:var(--pink)", text: "PLAYER PROFILE" }), h("h1", { style: "font-size:32px", text: CONFIG.name }),
+          h("p", { class: "muted", text: PROFILE.role }),
+          h("div", { class: "row", style: "margin-top:10px" }, h("span", { class: "chip", text: "MERN" }), h("span", { class: "chip", text: "JAVA" }), h("span", { class: "chip", text: "DSA" }), h("span", { class: "chip", text: "TECHNEEKX" }))))),
+    h("div", { class: "two" },
+      sec("About Me", h("p", { text: PROFILE.summary })),
+      sec("Education", h("b", { style: "font-family:var(--font-h)", text: PROFILE.degree }), h("p", { class: "muted", text: PROFILE.institution }))),
+    h("div", { class: "two" },
+      sec("Developer Journey", h("ul", { class: "timeline" }, PROFILE.journey.map(j => h("li", {}, h("b", { text: j.t }), h("div", { class: "muted", style: "font-size:13.5px", text: j.d })))),
+        h("p", { class: "note", text: "Dates intentionally omitted — add verified dates in PROFILE.journey." })),
+      sec("Community Leadership", h("p", { text: PROFILE.role + "." }),
+        h("ul", { class: "focus-list", style: "margin-top:12px" }, PROFILE.highlights.map(t => h("li", {}, h("span", { class: "dot" }), t))),
+        h("p", { style: "margin-top:12px" }, "Recognition: Best Lead award and Best Team recognition at the TechNeekX internal hackathon. Team project: CampusOS with Team Algorists."))),
+    sec("Technical Interests", h("div", { class: "stack" }, PROFILE.interests.map(t => h("span", { class: "chip", text: t })))));
+}
+
+/* Achievements */
+function viewAchievements(){
+  return h("div", {},
+    h("div", { class: "sect-h" }, h("h3", { style: "font-size:26px", text: "TROPHY ROOM" })),
+    h("div", { class: "cards" }, ACHIEVEMENTS.map(a => h("article", { class: "panel trophy" + (a.locked ? " locked" : ""), "data-s": "" },
+      a.image && isHttp(a.image) ? h("img", { src: a.image, alt: "", style: "width:100%;border-radius:14px;max-height:140px;object-fit:cover", onerror: function(){ this.remove(); } }) : null,
+      h("div", { class: "badge glow-on" }, icon(a.locked ? "lock" : "star")),
+      h("h4", { text: a.title }), h("p", { class: "muted", style: "font-size:13.5px", text: a.desc }),
+      h("span", { class: "chip " + (a.locked ? "warn" : "live"), text: a.date ? a.date : (a.locked ? "PLACEHOLDER" : "DATE NOT SET") })))),
+    h("p", { class: "note", text: "Each achievement supports an editable title, description, date and optional image URL in ACHIEVEMENTS. No certificates are shown unless added." }));
+}
+
+/* Resume */
+function viewResume(){
+  const hasPdf = !!CONFIG.resumeUrl;
+  const dl = hasPdf
+    ? h("a", { class: "btn red", href: CONFIG.resumeUrl, download: "" }, "DOWNLOAD RESUME")
+    : h("button", { class: "btn red off", type: "button", "aria-disabled": "true", onclick: () => toast("Add a resume PDF and set CONFIG.resumeUrl to enable download.") }, "DOWNLOAD RESUME");
+  const item = (t, s) => h("div", { class: "res-item" }, h("b", { style: "font-family:var(--font-h)", text: t }), s ? h("div", { class: "muted", style: "font-size:13.5px", text: s }) : null);
+  return h("div", { class: "grid" },
+    h("section", { class: "panel", "data-s": "" },
+      h("div", { class: "row", style: "justify-content:space-between" }, h("div", {}, h("h1", { style: "font-size:30px", text: CONFIG.name }), h("p", { class: "muted", text: "Full Stack Developer | MERN Stack | Java & DSA" })), dl),
+      !hasPdf ? h("p", { class: "note", text: "Resume PDF not added yet. Place your PDF in the project folder and set CONFIG.resumeUrl to its path — until then the download button stays disabled." }) : null),
+    h("div", { class: "res-grid" },
+      h("div", { class: "grid" },
+        h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Profile Summary" }), h("p", { text: PROFILE.summary })),
+        h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Projects" }), PROJECTS.map(p => item(p.name + " — " + p.category, p.short))),
+        h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Leadership & Achievements" }), item("Frontend Lead / Core Team, TechNeekX", "Website development, team coordination, mentoring."), item("Best Lead & Best Team", "TechNeekX internal hackathon recognition."))),
+      h("div", { class: "grid" },
+        h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Education" }), item(PROFILE.degree, PROFILE.institution)),
+        h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Skills" }), SKILL_GROUPS.map(g => h("div", { style: "margin-bottom:12px" }, h("div", { class: "muted", style: "font-size:12px;letter-spacing:.1em;margin-bottom:6px", text: g.name.toUpperCase() }), h("div", { class: "stack" }, g.items.map(i => h("span", { class: "chip", text: i })))))))));
+}
+
+/* Contact */
+function viewContact(){
+  const f = { name: h("input", { class: "in", id: "c-name", autocomplete: "name", "aria-describedby": "e-name" }),
+              email: h("input", { class: "in", id: "c-email", type: "email", autocomplete: "email", "aria-describedby": "e-email" }),
+              msg: h("textarea", { class: "in", id: "c-msg", "aria-describedby": "e-msg" }) };
+  const errs = { name: h("div", { class: "err", id: "e-name" }), email: h("div", { class: "err", id: "e-email" }), msg: h("div", { class: "err", id: "e-msg" }) };
+  const out = h("div", { "aria-live": "polite" });
+  const fld = (k, label) => h("div", {}, h("label", { for: f[k].id, text: label }), f[k], errs[k]);
+  function validate(){
+    let ok = true;
+    const v = { name: f.name.value.trim(), email: f.email.value.trim(), msg: f.msg.value.trim() };
+    const set = (k, m) => { errs[k].textContent = m; f[k].setAttribute("aria-invalid", m ? "true" : "false"); if (m) ok = false; };
+    set("name", v.name.length < 2 ? "Please enter your name." : "");
+    set("email", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email) ? "" : "Please enter a valid email address.");
+    set("msg", v.msg.length < 10 ? "Message should be at least 10 characters." : "");
+    return ok ? v : null;
+  }
+  const form = h("form", { novalidate: "", onsubmit: e => {
+    e.preventDefault();
+    const v = validate();
+    if (!v) { out.replaceChildren(h("div", { class: "feedback bad", role: "alert", text: "Please fix the highlighted fields." })); return; }
+    const href = "mailto:" + CONFIG.email + "?subject=" + encodeURIComponent("Portfolio message from " + v.name) + "&body=" + encodeURIComponent(v.msg + "\n\n— " + v.name + " (" + v.email + ")");
+    out.replaceChildren(h("div", { class: "feedback" },
+      h("p", { text: "Validated locally. Nothing has been sent — this prototype form has no backend." }),
+      h("a", { class: "btn red", style: "margin-top:10px", href }, "OPEN IN EMAIL APP")));
+    blip(700); toast("Form validated locally — use the email button to send.");
+  } },
+    fld("name", "Name"), fld("email", "Email"), fld("msg", "Message"),
+    h("div", { class: "row" }, h("button", { class: "btn red", type: "submit" }, "TRANSMIT"), h("button", { class: "btn sec", type: "reset", onclick: () => setTimeout(() => { out.replaceChildren(); Object.values(errs).forEach(x => x.textContent = ""); }, 0) }, "CLEAR")),
+    out);
+  return h("div", { class: "two" },
+    h("section", { class: "panel", "data-s": "" }, h("div", { class: "term", text: "> comms.terminal // local-only prototype" }), form,
+      h("p", { class: "note", text: "This form is local-only and sends nothing. Use the email link or button as the working fallback." })),
+    h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Direct Channels" }),
+      h("div", { class: "quick" },
+        h("a", { href: "mailto:" + CONFIG.email }, icon("mail"), CONFIG.email),
+        h("button", { type: "button", onclick: () => copyText(CONFIG.email) }, icon("copy"), "Copy email address"),
+        linkRow("GitHub", CONFIG.github, "gh"), linkRow("LinkedIn", CONFIG.linkedin, "in")),
+      h("p", { class: "note", text: "Email, GitHub and LinkedIn values are set in CONFIG at the top of the script." })));
+}
+
+/* Settings */
+function viewSettings(){
+  const defs = [
+    ["sound", "Sound effects", "Soft interface blips. Off by default; never autoplays."],
+    ["reduce", "Reduced motion", "Disables animations and transitions."],
+    ["glow", "Ambient glow", "Background lighting and glow effects."],
+    ["compact", "Compact sidebar", "Icons only with tooltips (desktop)."]
+  ];
+  const panel = h("section", { class: "panel", "data-s": "" }, h("h3", { text: "Preferences" }));
+  function paint(){
+    panel.replaceChildren(h("h3", { text: "Preferences" }),
+      ...defs.map(([k, t, d]) => {
+        const dis = k === "compact" && window.innerWidth <= 1180;
+        const sw = h("button", { class: "switch", type: "button", role: "switch", "aria-checked": String(!!settings[k]), "aria-label": t, disabled: dis, onclick: () => { settings[k] = !settings[k]; saveSettings(); applySettings(); if (k === "sound" && settings.sound) blip(660); paint(); } });
+        return h("div", { class: "setting" }, h("div", {}, h("b", { text: t }), h("small", { text: dis ? d + " Unavailable at this screen size." : d })), sw);
+      }),
+      h("div", { style: "padding-top:14px" }, h("button", { class: "btn sec", type: "button", onclick: () => { settings = Object.assign({}, DEFAULTS); saveSettings(); applySettings(); paint(); toast("Settings reset to defaults."); } }, "RESET SETTINGS")),
+      h("p", { class: "note", text: "Preferences are saved in localStorage when available. The app works fine without it." }));
+  }
+  paint();
+  return h("div", { style: "max-width:720px" }, panel);
+}
+
+/* ===================== ROUTER ===================== */
+let USE_PATH = /^https?:$/.test(location.protocol) && !!(window.history && history.pushState) &&
+  (location.pathname === "/" || NAV.some(n => n.path === location.pathname) || /^\/projects\/[^/]+$/.test(location.pathname));
+function currentPath(){
+  let p = "/";
+  if (location.hash.startsWith("#/")) p = location.hash.slice(1);
+  else if (USE_PATH) p = location.pathname;
+  p = p.split("?")[0];
+  if (p.length > 1) p = p.replace(/\/+$/, "");
+  return p || "/";
+}
+function navigate(path, replace){
+  blip(440);
+  if (USE_PATH){
+    try { replace ? history.replaceState({}, "", path) : history.pushState({}, "", path); render(); return; }
+    catch(e){ USE_PATH = false; }
+  }
+  if (replace) { try { history.replaceState(null, "", "#" + path); } catch(e){ location.hash = path; } render(); }
+  else if (location.hash === "#" + path) render();
+  else location.hash = path; // triggers hashchange -> render
+}
+function resolve(path){
+  const nav = NAV.find(n => n.path === path);
+  if (nav) return nav;
+  const m = path.match(/^\/projects\/([^/]+)$/);
+  if (m && getProject(m[1])) return { path: "/projects", detail: m[1] };
+  return null;
+}
+const VIEWS = { "/": viewHome, "/projects": viewProjects, "/skills": viewSkills, "/about": viewAbout, "/achievements": viewAchievements, "/resume": viewResume, "/contact": viewContact, "/settings": viewSettings };
+let lastPath = null;
+function render(){
+  let path = currentPath();
+  let r = resolve(path);
+  if (!r){
+    r = NAV[0]; path = "/";
+    if (lastPath !== null) toast("Route not found — returned Home.");
+    try { USE_PATH ? history.replaceState({}, "", "/") : history.replaceState(null, "", "#/"); } catch(e){}
+  }
+  const view = document.getElementById("view");
+  const node = r.detail ? viewProject(r.detail) : VIEWS[r.path]();
+  stagger(node);
+  view.replaceChildren(node);
+  view.classList.remove("view-in"); void view.offsetWidth; view.classList.add("view-in");
+  // chrome
+  const crumbs = [h("a", { href: "#/", onclick: e => { e.preventDefault(); navigate("/"); } }, "JUNAID.OS")];
+  let title = r.title;
+  if (r.path !== "/"){ crumbs.push(" / ", h("a", { href: "#" + r.path, onclick: e => { e.preventDefault(); navigate(r.path); } }, SHORT[r.path] || r.label)); }
+  if (r.detail){ const p = getProject(r.detail); crumbs.push(" / ", p.name); title = p.name; }
+  document.getElementById("crumb").replaceChildren(...crumbs);
+  document.getElementById("page-title").textContent = title;
+  document.title = title + " — JUNAID.OS";
+  document.querySelectorAll("#nav a").forEach(a => { const on = a.dataset.path === r.path; a.classList.toggle("active", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+  moveIndicator();
+  if (lastPath !== null && lastPath !== path) { window.scrollTo(0, 0); view.focus({ preventScroll: true }); }
+  lastPath = path;
+}
+function buildNav(){
+  const nav = document.getElementById("nav");
+  NAV.forEach(n => {
+    const a = h("a", { href: "#" + n.path, "data-path": n.path, "data-tip": n.label, "aria-label": n.label, onclick: e => { e.preventDefault(); navigate(n.path); } },
+      icon(n.icon), h("span", { class: "lbl", text: n.label.split(" / ")[0] }));
+    nav.append(a);
+  });
+}
+function moveIndicator(){
+  const ind = document.getElementById("nav-ind"), act = document.querySelector("#nav a.active");
+  if (!ind || !act || window.innerWidth <= 760) { if (ind) ind.style.opacity = 0; return; }
+  ind.style.opacity = 1;
+  ind.style.transform = "translateY(" + (act.offsetTop + (act.offsetHeight - 28) / 2) + "px)";
+}
+
+/* ===================== COMMAND PALETTE ===================== */
+function openPalette(){
+  if (document.getElementById("pal-input")) return;
+  const items = [
+    ...NAV.map(n => ({ label: "Go to " + n.label.split(" / ")[0], kind: "PAGE", run: () => navigate(n.path) })),
+    ...PROJECTS.map(p => ({ label: "Open " + p.name, kind: "PROJECT", extra: p.tech.join(" ") + " " + p.category, run: () => navigate("/projects/" + p.id) })),
+    { label: "Copy email address", kind: "ACTION", run: () => copyText(CONFIG.email) },
+    { label: "Toggle ambient glow", kind: "ACTION", run: () => { settings.glow = !settings.glow; saveSettings(); applySettings(); toast("Ambient glow " + (settings.glow ? "on" : "off")); } },
+    { label: "Toggle reduced motion", kind: "ACTION", run: () => { settings.reduce = !settings.reduce; saveSettings(); applySettings(); toast("Reduced motion " + (settings.reduce ? "on" : "off")); } }
+  ];
+  let sel = 0, shown = items, entry;
+  const input = h("input", { id: "pal-input", type: "text", placeholder: "Type a command or project…", "aria-label": "Command palette search", autocomplete: "off", role: "combobox", "aria-expanded": "true", "aria-controls": "pal-list", "data-autofocus": "" });
+  const list = h("ul", { class: "pal-list", id: "pal-list", role: "listbox" });
+  function paint(){
+    list.replaceChildren(...(shown.length ? shown.map((it, i) => h("li", { role: "option", id: "pal-o" + i, "aria-selected": String(i === sel), onmousemove: () => { if (sel !== i){ sel = i; mark(); } }, onclick: () => run(it) }, h("span", { text: it.label }), h("small", { text: it.kind })))
+      : [h("li", { text: "No results" })]));
+    input.setAttribute("aria-activedescendant", shown.length ? "pal-o" + sel : "");
+  }
+  function mark(){ [...list.children].forEach((li, i) => li.setAttribute("aria-selected", String(i === sel))); input.setAttribute("aria-activedescendant", "pal-o" + sel); }
+  function run(it){ closeOverlay(entry); it.run(); }
+  input.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    shown = items.filter(i => !q || (i.label + " " + (i.extra || "")).toLowerCase().includes(q)); sel = 0; paint();
+  });
+  input.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown"){ e.preventDefault(); if (shown.length){ sel = (sel + 1) % shown.length; mark(); list.children[sel].scrollIntoView({ block: "nearest" }); } }
+    else if (e.key === "ArrowUp"){ e.preventDefault(); if (shown.length){ sel = (sel - 1 + shown.length) % shown.length; mark(); list.children[sel].scrollIntoView({ block: "nearest" }); } }
+    else if (e.key === "Enter"){ e.preventDefault(); if (shown[sel]) run(shown[sel]); }
+  });
+  const box = h("div", { class: "modal pal", role: "dialog", "aria-modal": "true", "aria-label": "Command palette" },
+    h("div", { class: "pal-in" }, icon("search"), input, h("span", { class: "kbd", text: "ESC" })), list,
+    h("div", { class: "pal-foot", text: "↑ ↓ to navigate · Enter to select · Esc to close" }));
+  entry = openOverlay(box);
+  paint();
+}
+
+/* ===================== INIT ===================== */
+function init(){
+  loadSettings();
+  const savedStatus = store.get("junaidos.status");
+  const st = document.getElementById("status-text");
+  st.textContent = savedStatus || CONFIG.statusText;
+  st.addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); st.blur(); } });
+  st.addEventListener("blur", () => { const t = st.textContent.trim() || CONFIG.statusText; st.textContent = t; store.set("junaidos.status", t); toast("Status updated."); });
+
+  document.getElementById("kbd-hint").textContent = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? "⌘ K" : "Ctrl K";
+  buildNav(); applySettings(); render();
+
+  window.addEventListener("popstate", render);
+  window.addEventListener("hashchange", render);
+  window.addEventListener("resize", () => { applySettings(); });
+  document.getElementById("open-pal").addEventListener("click", openPalette);
+  document.getElementById("avatar").addEventListener("click", () => navigate("/about"));
+  document.getElementById("skip").addEventListener("click", e => { e.preventDefault(); document.getElementById("view").focus(); });
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){ e.preventDefault(); overlayStack.length ? closeOverlay() : openPalette(); }
+    else if (e.key === "Escape" && overlayStack.length){ e.preventDefault(); closeOverlay(); }
+  });
+
+  // Launch overlay: skippable, never blocks content (content is already rendered beneath)
+  const launch = document.getElementById("launch");
+  const finish = () => launch.classList.add("done");
+  document.getElementById("launch-skip").addEventListener("click", finish);
+  launch.addEventListener("click", finish);
+  document.addEventListener("keydown", finish, { once: true });
+  if (reducedMotion()) finish(); else setTimeout(finish, 1300);
+}
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
